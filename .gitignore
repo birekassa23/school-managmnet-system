@@ -1,2 +1,7 @@
-
-.codegpt
+node_modules/
+client/dist/
+server/.env
+server/uploads/image/*
+server/uploads/video/*
+!server/uploads/image/.gitkeep
+!server/uploads/video/.gitkeep

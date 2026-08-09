@@ -1,0 +1,14 @@
+{
+  "name": "azene-wube-academy-server",
+  "version": "1.0.0",
+  "description": "Express API for School Interaction System",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,23 @@
+.form-link-btn {
+  text-decoration: none;
+}
+
+.form-error {
+  color: #c0392b;
+  margin: 8px 0;
+}
+
+.form-success {
+  color: #27ae60;
+  margin: 8px 0;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root > *:not(footer) {
+  flex: 1;
+}

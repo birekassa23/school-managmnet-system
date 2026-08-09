@@ -1,0 +1,356 @@
+:root {
+  --awa-navy: #0c2340;
+  --awa-navy-soft: #132f52;
+  --awa-gold: #c9a227;
+  --awa-gold-light: #e8c547;
+  --awa-cream: #f7f4ef;
+  --awa-text: #1a1a2e;
+  --awa-muted: #5c6370;
+  --awa-card-shadow: 0 12px 40px rgba(12, 35, 64, 0.12);
+  --awa-radius: 16px;
+}
+
+.academy-footer {
+  margin-top: auto;
+  padding: 1.25rem 1.5rem 1.5rem;
+  text-align: center;
+  background: linear-gradient(180deg, transparent, rgba(12, 35, 64, 0.06));
+  border-top: 1px solid rgba(12, 35, 64, 0.08);
+}
+
+.academy-footer p {
+  margin: 0.25rem 0;
+  font-size: 0.85rem;
+  color: var(--awa-muted);
+  line-height: 1.5;
+}
+
+.academy-footer .copyright {
+  font-weight: 600;
+  color: var(--awa-navy);
+}
+
+.academy-footer .developer {
+  font-size: 0.8rem;
+}
+
+/* —— Public landing (Welcome) —— */
+.landing {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem 3rem;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201, 162, 39, 0.15), transparent),
+    linear-gradient(165deg, var(--awa-navy) 0%, var(--awa-navy-soft) 45%, #0a1628 100%);
+  color: var(--awa-cream);
+  text-align: center;
+}
+
+.landing-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--awa-gold-light);
+  border: 1px solid rgba(201, 162, 39, 0.4);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.landing-logo {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--awa-gold), var(--awa-gold-light));
+  box-shadow: 0 8px 32px rgba(201, 162, 39, 0.35);
+  font-size: 2.5rem;
+  color: var(--awa-navy);
+}
+
+.landing-title {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.landing-title span {
+  color: var(--awa-gold-light);
+}
+
+.landing-tagline {
+  max-width: 32rem;
+  margin: 0 auto 2rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: rgba(247, 244, 239, 0.85);
+}
+
+.landing-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.95rem 2rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--awa-navy);
+  text-decoration: none;
+  background: linear-gradient(135deg, var(--awa-gold-light), var(--awa-gold));
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(201, 162, 39, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.landing-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(201, 162, 39, 0.5);
+  color: var(--awa-navy);
+}
+
+.landing-features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+  max-width: 720px;
+}
+
+.landing-feature {
+  flex: 1 1 140px;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: rgba(247, 244, 239, 0.75);
+}
+
+.landing-feature i {
+  display: block;
+  font-size: 1.5rem;
+  color: var(--awa-gold);
+  margin-bottom: 0.5rem;
+}
+
+/* —— Role select —— */
+.role-page {
+  min-height: calc(100vh - 80px);
+  padding: 2rem 1.5rem;
+  background: var(--awa-cream);
+}
+
+.role-page h1 {
+  text-align: center;
+  color: var(--awa-navy);
+  font-size: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.role-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1.5rem;
+  text-decoration: none;
+  color: var(--awa-navy);
+  background: #fff;
+  border-radius: var(--awa-radius);
+  box-shadow: var(--awa-card-shadow);
+  border: 2px solid transparent;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.role-card:hover {
+  border-color: var(--awa-gold);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(12, 35, 64, 0.15);
+  color: var(--awa-navy);
+}
+
+.role-card i {
+  font-size: 4rem;
+  color: var(--awa-gold);
+  margin-bottom: 1rem;
+}
+
+.role-card span {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.role-card small {
+  margin-top: 0.5rem;
+  color: var(--awa-muted);
+  font-size: 0.85rem;
+}
+
+/* —— Authenticated home dashboard —— */
+.home-dashboard {
+  margin-left: 260px;
+  padding: 0 2rem 3rem;
+  min-height: calc(100vh - 60px);
+  background: linear-gradient(180deg, var(--awa-cream) 0%, #fff 35%);
+}
+
+@media (max-width: 900px) {
+  .home-dashboard {
+    margin-left: 0;
+    padding: 1rem 1rem 2rem;
+    padding-top: 4rem;
+  }
+}
+
+.home-hero {
+  position: relative;
+  padding: 2.5rem 2rem;
+  margin-bottom: 2rem;
+  border-radius: var(--awa-radius);
+  overflow: hidden;
+  background: linear-gradient(120deg, var(--awa-navy) 0%, var(--awa-navy-soft) 100%);
+  color: var(--awa-cream);
+  box-shadow: var(--awa-card-shadow);
+}
+
+.home-hero::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 162, 39, 0.25), transparent 70%);
+  pointer-events: none;
+}
+
+.home-hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.home-hero-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--awa-gold-light);
+  margin-bottom: 0.5rem;
+}
+
+.home-hero h1 {
+  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+
+.home-hero p {
+  margin: 0;
+  max-width: 36rem;
+  font-size: 1.05rem;
+  opacity: 0.9;
+  line-height: 1.55;
+}
+
+.home-section-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--awa-navy);
+  margin-bottom: 1.25rem;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: var(--awa-text);
+  background: #fff;
+  border-radius: var(--awa-radius);
+  border: 1px solid rgba(12, 35, 64, 0.08);
+  box-shadow: 0 4px 20px rgba(12, 35, 64, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.home-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(201, 162, 39, 0.5);
+  box-shadow: var(--awa-card-shadow);
+  color: var(--awa-text);
+}
+
+.home-card-icon {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 1.35rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.home-card-icon.events { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+.home-card-icon.lectures { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+.home-card-icon.notices { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.home-card-icon.gallery { background: linear-gradient(135deg, #ec4899, #db2777); }
+.home-card-icon.attendance { background: linear-gradient(135deg, #10b981, #059669); }
+
+.home-card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--awa-navy);
+}
+
+.home-card p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--awa-muted);
+  line-height: 1.45;
+}
+
+.home-card-arrow {
+  margin-top: auto;
+  padding-top: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--awa-gold);
+}
+
+.home-card-arrow i {
+  margin-left: 0.35rem;
+  transition: transform 0.2s;
+}
+
+.home-card:hover .home-card-arrow i {
+  transform: translateX(4px);
+}
