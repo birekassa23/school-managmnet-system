@@ -1,30 +1,56 @@
-import pool from '../config/db.js';
+import { supabase } from '../config/supabase.js';
 
 export async function getAllImages() {
-  const [rows] = await pool.query(
-    `SELECT g.id, g.title, g.description, g.file_name, g.file_path, g.created_at,
-            CONCAT(u.first_name, ' ', u.last_name) AS uploader_name
-     FROM gallery_images g
-     JOIN users u ON g.uploaded_by_user_id = u.id
-     ORDER BY g.created_at DESC`
-  );
-  return rows;
+  const { data, error } = await supabase
+    .from('gallery_images')
+    .select(`
+      id,
+      title,
+      description,
+      file_name,
+      file_path,
+      created_at,
+      users:uploaded_by_user_id (first_name, last_name)
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+
+  return (data || []).map((g) => ({
+    id: g.id,
+    title: g.title,
+    description: g.description,
+    file_name: g.file_name,
+    file_path: g.file_path,
+    created_at: g.created_at,
+    uploader_name: g.users ? `${g.users.first_name} ${g.users.last_name}` : 'Staff',
+  }));
 }
 
 export async function getImageById(id) {
-  const [rows] = await pool.query(`SELECT * FROM gallery_images WHERE id = ? LIMIT 1`, [id]);
-  return rows[0] || null;
+  const { data, error } = await supabase.from('gallery_images').select('*').eq('id', id).maybeSingle();
+  if (error) throw error;
+  return data || null;
 }
 
 export async function createImage(title, description, fileName, filePath, uploaderUserId) {
-  const [res] = await pool.query(
-    `INSERT INTO gallery_images (title, description, file_name, file_path, uploaded_by_user_id)
-     VALUES (?, ?, ?, ?, ?)`,
-    [title.trim(), description?.trim() || null, fileName, filePath, uploaderUserId]
-  );
-  return res.insertId;
+  const { data, error } = await supabase
+    .from('gallery_images')
+    .insert({
+      title: title.trim(),
+      description: description?.trim() || null,
+      file_name: fileName,
+      file_path: filePath,
+      uploaded_by_user_id: uploaderUserId,
+    })
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  return data.id;
 }
 
 export async function deleteImage(id) {
-  await pool.query(`DELETE FROM gallery_images WHERE id = ?`, [id]);
+  const { error } = await supabase.from('gallery_images').delete().eq('id', id);
+  if (error) throw error;
 }

@@ -86,176 +86,161 @@ export default function Events() {
   };
 
   return (
-    <div className="home-dashboard" style={{ paddingTop: '2rem' }}>
-      <div style={{ maxWidth: 960, margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <div>
-            <h1 style={{ color: 'var(--awa-navy)', margin: 0 }}>📅 Upcoming School Events</h1>
-            <p style={{ color: 'var(--awa-muted)', margin: '0.25rem 0 0' }}>
-              Calendar of celebrations, sports events, academic tests, and parent conferences.
-            </p>
-          </div>
-          {canCreate && (
-            <button
-              onClick={() => setShowModal(true)}
-              style={{
-                padding: '0.65rem 1.5rem',
-                borderRadius: 25,
-                background: 'linear-gradient(135deg, var(--awa-gold-light), var(--awa-gold))',
-                color: 'var(--awa-navy)',
-                fontWeight: 700,
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(201, 162, 39, 0.4)',
-              }}
-            >
-              + Create New Event
-            </button>
-          )}
+    <div className="max-w-6xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            📅 Upcoming School Events
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Calendar of celebrations, sports events, academic tests, and parent conferences.
+          </p>
         </div>
-
-        {msg && (
-          <div
-            style={{
-              padding: '0.85rem 1.25rem',
-              borderRadius: 8,
-              marginBottom: '1.5rem',
-              background: msg.type === 'success' ? '#d1fae5' : '#fee2e2',
-              color: msg.type === 'success' ? '#065f46' : '#991b1b',
-            }}
+        {canCreate && (
+          <button
+            onClick={() => setShowModal(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer self-start sm:self-auto"
           >
-            {msg.text}
-          </div>
+            <i className="fas fa-plus" /> Create New Event
+          </button>
         )}
+      </div>
 
-        {/* Events List */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}>
+      {msg && (
+        <div
+          className={`p-4 rounded-xl text-sm font-medium text-center ${
+            msg.type === 'success'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+              : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800'
+          }`}
+        >
+          {msg.text}
+        </div>
+      )}
+
+      {loading ? (
+        <div className="text-center py-12 text-slate-400">
+          <i className="fas fa-spinner fa-spin fa-2x mb-2" />
+          <p className="text-sm">Loading events...</p>
+        </div>
+      ) : events.length === 0 ? (
+        <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8">
+          <i className="fas fa-calendar-times text-4xl text-slate-300 dark:text-slate-600 mb-3" />
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">No Events Scheduled</h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Upcoming school events will be listed here.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {events.map((evt) => (
-            <div
+            <article
               key={evt.id}
-              style={{
-                background: '#fff',
-                borderRadius: 16,
-                padding: '1.5rem',
-                boxShadow: '0 4px 20px rgba(12, 35, 64, 0.06)',
-                borderLeft: '5px solid var(--awa-gold)',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
+              className="flex flex-col p-6 rounded-2xl bg-white dark:bg-slate-900 border-l-4 border-l-amber-500 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
             >
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--awa-gold)', textTransform: 'uppercase', marginBottom: 4 }}>
+              <div className="text-xs font-bold capitalize tracking-wider text-amber-600 dark:text-amber-400 mb-1">
                 📆 {evt.event_date ? new Date(evt.event_date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'TBA'}
               </div>
-              <h3 style={{ margin: '0 0 0.5rem', color: 'var(--awa-navy)', fontSize: '1.15rem' }}>{evt.title}</h3>
-              <p style={{ color: 'var(--awa-muted)', fontSize: '0.9rem', lineHeight: 1.5, flex: 1, margin: '0 0 1rem' }}>
-                {evt.description}
-              </p>
-              <div style={{ fontSize: '0.8rem', color: '#64748b', borderTop: '1px solid #f1f5f9', paddingTop: '0.75rem' }}>
-                📍 <strong>Location:</strong> {evt.location || 'Campus'} <br />
-                ⏰ <strong>Time:</strong> {evt.start_time || '09:00'} - {evt.end_time || '12:00'}
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{evt.title}</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed flex-1 mb-4">{evt.description}</p>
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                <div>📍 <strong>Location:</strong> {evt.location || 'Campus Auditorium'}</div>
+                <div>⏰ <strong>Time:</strong> {evt.start_time || '09:00'} - {evt.end_time || '12:00'}</div>
               </div>
               {canCreate && (
                 <button
                   onClick={() => handleDelete(evt.id)}
-                  style={{
-                    marginTop: '0.85rem',
-                    alignSelf: 'flex-end',
-                    padding: '0.25rem 0.75rem',
-                    background: '#fee2e2',
-                    color: '#991b1b',
-                    border: 'none',
-                    borderRadius: 4,
-                    fontSize: '0.75rem',
-                    cursor: 'pointer',
-                  }}
+                  className="mt-4 self-end px-3 py-1 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 hover:bg-red-600 hover:text-white text-xs font-semibold transition-colors cursor-pointer"
                 >
-                  Delete Event
+                  <i className="fas fa-trash-alt mr-1" /> Delete Event
                 </button>
               )}
-            </div>
+            </article>
           ))}
         </div>
+      )}
 
-        {/* Create Event Modal */}
-        {showModal && (
+      {/* Modal Dialog */}
+      {showModal && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setShowModal(false)}
+        >
           <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0,0,0,0.5)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 1000,
-            }}
+            className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto animate-fade-in border border-slate-200 dark:border-slate-800"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ background: '#fff', borderRadius: 16, padding: '2rem', width: '90%', maxWidth: 500 }}>
-              <h2 style={{ margin: '0 0 1rem', color: 'var(--awa-navy)' }}>Create New School Event</h2>
-              <form onSubmit={handleCreate}>
-                <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.85rem', marginBottom: 4 }}>Event Title</label>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Create New School Event</h2>
+              <button
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white text-lg cursor-pointer p-1"
+                onClick={() => setShowModal(false)}
+              >
+                <i className="fas fa-times" />
+              </button>
+            </div>
+            <form onSubmit={handleCreate} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 capitalize tracking-wider mb-1">Event Title</label>
+                <input
+                  type="text"
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm"
+                  placeholder="e.g. Science Fair 2026"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 capitalize tracking-wider mb-1">Description</label>
+                <textarea
+                  required
+                  rows={3}
+                  className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm resize-y"
+                  placeholder="Provide event details and agenda..."
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 capitalize tracking-wider mb-1">Date</label>
+                  <input
+                    type="date"
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm"
+                    value={formData.eventDate}
+                    onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 capitalize tracking-wider mb-1">Location</label>
                   <input
                     type="text"
-                    required
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm"
+                    placeholder="Auditorium / Field"
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   />
                 </div>
-                <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.85rem', marginBottom: 4 }}>Description</label>
-                  <textarea
-                    required
-                    rows={3}
-                    style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  />
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: 600, fontSize: '0.85rem', marginBottom: 4 }}>Date</label>
-                    <input
-                      type="date"
-                      required
-                      style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
-                      value={formData.eventDate}
-                      onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontWeight: 600, fontSize: '0.85rem', marginBottom: 4 }}>Location</label>
-                    <input
-                      type="text"
-                      style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc' }}
-                      value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
-                  <button
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                    style={{ padding: '0.5rem 1.25rem', borderRadius: 6, border: '1px solid #ccc', background: '#fff' }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    style={{ padding: '0.5rem 1.25rem', borderRadius: 6, border: 'none', background: 'var(--awa-navy)', color: '#fff', fontWeight: 600 }}
-                  >
-                    Publish Event
-                  </button>
-                </div>
-              </form>
-            </div>
+              </div>
+              <div className="flex justify-end gap-3 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-sm shadow-md hover:shadow-lg transition-all cursor-pointer"
+                >
+                  Publish Event
+                </button>
+              </div>
+            </form>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

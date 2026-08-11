@@ -2,11 +2,11 @@ import * as authService from '../services/authService.js';
 
 export async function login(req, res, next) {
   try {
-    const { username, uid, password, pwd } = req.body;
-    const identifier = username || uid;
-    const pass = password || pwd;
+    const { identifier, username, uid, suid, password, pwd, spwd } = req.body;
+    const cleanIdentifier = identifier || username || uid || suid;
+    const cleanPassword = password || pwd || spwd;
 
-    const result = await authService.loginUser(identifier, pass);
+    const result = await authService.loginUser(cleanIdentifier, cleanPassword);
     res.json({
       success: true,
       message: 'Login successful',

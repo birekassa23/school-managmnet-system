@@ -12,7 +12,6 @@ export default function Attendance() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState(null);
 
-  // Sample student roster for section marking
   const sampleStudents = [
     { id: 1, name: 'Abebe Bikila', admission: 'ADM-00101' },
     { id: 2, name: 'Tigist Assefa', admission: 'ADM-00102' },
@@ -31,7 +30,6 @@ export default function Attendance() {
     setLoading(true);
     setMsg(null);
     try {
-      // Try fetching existing section attendance records
       const existing = await api(`/attendance/section?sectionId=${sectionId}&date=${date}`);
       if (existing && existing.length) {
         setAttendanceRecords(
@@ -44,7 +42,6 @@ export default function Attendance() {
           }))
         );
       } else {
-        // Initialize default present status
         setAttendanceRecords(
           sampleStudents.map((s) => ({
             studentId: s.id,
@@ -56,7 +53,6 @@ export default function Attendance() {
         );
       }
 
-      // Fetch summary stats
       const sumRes = await api('/attendance/student');
       if (sumRes) setSummary(sumRes);
     } catch (err) {
@@ -109,172 +105,129 @@ export default function Attendance() {
   };
 
   return (
-    <div className="home-dashboard" style={{ paddingTop: '2rem' }}>
-      <div style={{ maxWidth: 960, margin: '0 auto' }}>
-        <h1 style={{ color: 'var(--awa-navy)', marginBottom: '0.5rem' }}>📋 Student Attendance Manager</h1>
-        <p style={{ color: 'var(--awa-muted)', marginBottom: '1.5rem' }}>
-          Select class section and date to record daily attendance, track absences, and view statistics.
-        </p>
+    <div className="max-w-6xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            📋 Student Attendance Manager
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Select class section and date to record daily attendance and track absences.
+          </p>
+        </div>
+      </div>
 
-        {msg && (
-          <div
-            style={{
-              padding: '0.85rem 1.25rem',
-              borderRadius: 8,
-              marginBottom: '1.5rem',
-              background: msg.type === 'success' ? '#d1fae5' : '#fee2e2',
-              color: msg.type === 'success' ? '#065f46' : '#991b1b',
-              fontWeight: 500,
-            }}
-          >
-            {msg.text}
-          </div>
-        )}
-
-        {/* Section & Date Select Controls */}
+      {msg && (
         <div
-          style={{
-            background: '#fff',
-            padding: '1.25rem',
-            borderRadius: 12,
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            gap: '1.5rem',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-          }}
+          className={`p-4 rounded-xl text-sm font-medium text-center ${
+            msg.type === 'success'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+              : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800'
+          }`}
         >
-          <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--awa-navy)', marginBottom: 4 }}>
-              Class & Section
-            </label>
-            <select
-              value={sectionId}
-              onChange={(e) => setSectionId(e.target.value)}
-              style={{ padding: '0.5rem 1rem', borderRadius: 6, border: '1px solid #ccc' }}
-            >
-              <option value="1">Grade 9 - Section A</option>
-              <option value="2">Grade 10 - Section B</option>
-              <option value="3">Grade 11 - Section A</option>
-              <option value="4">Grade 12 - Section C</option>
-            </select>
-          </div>
+          {msg.text}
+        </div>
+      )}
 
-          <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--awa-navy)', marginBottom: 4 }}>
-              Attendance Date
-            </label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              style={{ padding: '0.45rem 1rem', borderRadius: 6, border: '1px solid #ccc' }}
-            />
-          </div>
+      {/* Controls Bar */}
+      <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+        <div className="flex-1 space-y-1">
+          <label className="block text-xs font-bold capitalize tracking-wider text-slate-700 dark:text-slate-300">
+            Class & Section
+          </label>
+          <select
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm font-medium"
+            value={sectionId}
+            onChange={(e) => setSectionId(e.target.value)}
+          >
+            <option value="1">Grade 9 - Section A</option>
+            <option value="2">Grade 10 - Section B</option>
+            <option value="3">Grade 11 - Section A</option>
+            <option value="4">Grade 12 - Section C</option>
+          </select>
         </div>
 
-        {/* Attendance Marking Table */}
-        <form onSubmit={handleSubmit}>
-          <div
-            style={{
-              background: '#fff',
-              borderRadius: 12,
-              boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-              overflow: 'hidden',
-              marginBottom: '1.5rem',
-            }}
-          >
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-              <thead>
-                <tr style={{ background: 'var(--awa-navy)', color: '#fff', fontSize: '0.9rem' }}>
-                  <th style={{ padding: '0.85rem 1rem' }}>#</th>
-                  <th style={{ padding: '0.85rem 1rem' }}>Admission No</th>
-                  <th style={{ padding: '0.85rem 1rem' }}>Student Name</th>
-                  <th style={{ padding: '0.85rem 1rem' }}>Status</th>
-                  <th style={{ padding: '0.85rem 1rem' }}>Remarks / Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {attendanceRecords.map((row, idx) => (
-                  <tr key={row.studentId} style={{ borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '0.75rem 1rem', fontWeight: 600 }}>{idx + 1}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: 'var(--awa-muted)', fontSize: '0.85rem' }}>
-                      {row.admission}
-                    </td>
-                    <td style={{ padding: '0.75rem 1rem', fontWeight: 600, color: 'var(--awa-navy)' }}>
-                      {row.name}
-                    </td>
-                    <td style={{ padding: '0.75rem 1rem' }}>
-                      <select
-                        value={row.status}
-                        onChange={(e) => handleStatusChange(row.studentId, e.target.value)}
-                        disabled={!canMark}
-                        style={{
-                          padding: '0.35rem 0.65rem',
-                          borderRadius: 6,
-                          fontWeight: 600,
-                          border: '1px solid #ccc',
-                          background:
-                            row.status === 'present'
-                              ? '#ecfdf5'
-                              : row.status === 'absent'
-                              ? '#fef2f2'
-                              : row.status === 'late'
-                              ? '#fffbeb'
-                              : '#eff6ff',
-                          color:
-                            row.status === 'present'
-                              ? '#047857'
-                              : row.status === 'absent'
-                              ? '#b91c1c'
-                              : row.status === 'late'
-                              ? '#b45309'
-                              : '#1d4ed8',
-                        }}
-                      >
-                        <option value="present">Present</option>
-                        <option value="absent">Absent</option>
-                        <option value="late">Late</option>
-                        <option value="excused">Excused</option>
-                      </select>
-                    </td>
-                    <td style={{ padding: '0.75rem 1rem' }}>
-                      <input
-                        type="text"
-                        placeholder="Add optional note..."
-                        value={row.remarks}
-                        onChange={(e) => handleRemarkChange(row.studentId, e.target.value)}
-                        disabled={!canMark}
-                        style={{ width: '90%', padding: '0.35rem 0.5rem', borderRadius: 4, border: '1px solid #ddd' }}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="flex-1 space-y-1">
+          <label className="block text-xs font-bold capitalize tracking-wider text-slate-700 dark:text-slate-300">
+            Attendance Date
+          </label>
+          <input
+            type="date"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm font-medium"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </div>
+      </div>
 
-          {canMark && (
+      {/* Roster Table Container */}
+      <form onSubmit={handleSubmit}>
+        <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-slate-900 dark:bg-slate-950 text-white text-xs tracking-wider font-semibold">
+              <tr>
+                <th className="p-4">#</th>
+                <th className="p-4">Admission No</th>
+                <th className="p-4">Student Name</th>
+                <th className="p-4">Attendance Status</th>
+                <th className="p-4">Notes / Remarks</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {attendanceRecords.map((row, idx) => (
+                <tr key={row.studentId} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                  <td className="p-4 font-bold text-slate-900 dark:text-white">{idx + 1}</td>
+                  <td className="p-4 text-xs font-semibold text-slate-500 dark:text-slate-400">{row.admission}</td>
+                  <td className="p-4 font-bold text-slate-900 dark:text-white">{row.name}</td>
+                  <td className="p-4">
+                    <select
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold border focus:outline-none cursor-pointer ${
+                        row.status === 'present'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                          : row.status === 'absent'
+                          ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800'
+                          : row.status === 'late'
+                          ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                          : 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800'
+                      }`}
+                      value={row.status}
+                      onChange={(e) => handleStatusChange(row.studentId, e.target.value)}
+                      disabled={!canMark}
+                    >
+                      <option value="present" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Present</option>
+                      <option value="absent" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Absent</option>
+                      <option value="late" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Late</option>
+                      <option value="excused" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Excused</option>
+                    </select>
+                  </td>
+                  <td className="p-4">
+                    <input
+                      type="text"
+                      className="w-full px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-amber-400"
+                      placeholder="Optional remark..."
+                      value={row.remarks}
+                      onChange={(e) => handleRemarkChange(row.studentId, e.target.value)}
+                      disabled={!canMark}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {canMark && (
+          <div className="mt-6 flex justify-end">
             <button
               type="submit"
               disabled={saving}
-              style={{
-                padding: '0.75rem 2rem',
-                borderRadius: 30,
-                background: 'linear-gradient(135deg, var(--awa-gold-light), var(--awa-gold))',
-                color: 'var(--awa-navy)',
-                fontWeight: 700,
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(201, 162, 39, 0.4)',
-              }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer"
             >
-              {saving ? 'Saving Attendance...' : 'Save Attendance Records'}
+              <i className="fas fa-save" /> {saving ? 'Saving...' : 'Save Attendance Records'}
             </button>
-          )}
-        </form>
-      </div>
+          </div>
+        )}
+      </form>
     </div>
   );
 }

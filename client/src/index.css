@@ -1,23 +1,24 @@
-.form-link-btn {
-  text-decoration: none;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-awa-navy: #0c2340;
+  --color-awa-navy-soft: #132f52;
+  --color-awa-navy-dark: #071629;
+  --color-awa-gold: #c9a227;
+  --color-awa-gold-light: #e8c547;
+  --color-awa-cream: #f8fafc;
+  --color-awa-muted: #64748b;
 }
 
-.form-error {
-  color: #c0392b;
-  margin: 8px 0;
+html.dark {
+  color-scheme: dark;
+  background-color: #030712;
+  color: #f3f4f6;
 }
 
-.form-success {
-  color: #27ae60;
-  margin: 8px 0;
-}
-
-#root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-#root > *:not(footer) {
-  flex: 1;
+html {
+  color-scheme: light;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

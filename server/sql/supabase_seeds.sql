@@ -58,11 +58,16 @@ ON CONFLICT DO NOTHING;
 
 -- 4. Default Super Admin User (username: superadmin, password: admin123)
 INSERT INTO users (username, email, password_hash, first_name, last_name, phone_number, status) VALUES
-('superadmin', 'admin@azenewube.edu.et', '$2a$10$wT8KzLg59jE9M0P5a.J4o.kC2nS1W2G6h7X8Y9Z0a1b2c3d4e5f6g', 'Admin', 'User', '0911000000', 'active')
+('superadmin', 'admin@azenewube.edu.et', '$2b$10$KxbH2N8f3.pcPtuMM4eveOYQE5rFssmnf9S0TY/nrxhz7kxXXtbwi', 'Admin', 'User', '0911000000', 'active'),
+('teacher1', 'teacher1@azenewube.edu.et', '$2b$10$KxbH2N8f3.pcPtuMM4eveOYQE5rFssmnf9S0TY/nrxhz7kxXXtbwi', 'Abebe', 'Bikila', '0911223344', 'active')
 ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO user_roles (user_id, role_id)
 SELECT u.id, 1 FROM users u WHERE u.username = 'superadmin'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, 4 FROM users u WHERE u.username = 'teacher1'
 ON CONFLICT DO NOTHING;
 
 -- 5. Seed Assessment Types

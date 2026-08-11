@@ -1,25 +1,59 @@
-import pool from '../config/db.js';
+import { supabase } from '../config/supabase.js';
 
 export async function getAllEvents() {
-  const [rows] = await pool.query(
-    `SELECT e.id, e.title, e.description, e.event_date, e.start_time, e.end_time, e.location, e.target_audience, e.created_at,
-            CONCAT(u.first_name, ' ', u.last_name) AS organizer_name
-     FROM events e
-     JOIN users u ON e.created_by_user_id = u.id
-     ORDER BY e.event_date ASC`
-  );
-  return rows;
+  const { data, error } = await supabase
+    .from('events')
+    .select(`
+      id,
+      title,
+      description,
+      event_date,
+      start_time,
+      end_time,
+      location,
+      target_audience,
+      created_at,
+      users:created_by_user_id (first_name, last_name)
+    `)
+    .order('event_date', { ascending: true });
+
+  if (error) throw error;
+
+  return (data || []).map((e) => ({
+    id: e.id,
+    title: e.title,
+    description: e.description,
+    event_date: e.event_date,
+    start_time: e.start_time,
+    end_time: e.end_time,
+    location: e.location,
+    target_audience: e.target_audience,
+    created_at: e.created_at,
+    organizer_name: e.users ? `${e.users.first_name} ${e.users.last_name}` : 'School Admin',
+  }));
 }
 
 export async function createEvent(title, description, eventDate, startTime, endTime, location, targetAudience, createdByUserId) {
-  const [res] = await pool.query(
-    `INSERT INTO events (title, description, event_date, start_time, end_time, location, target_audience, created_by_user_id)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [title.trim(), description.trim(), eventDate, startTime || null, endTime || null, location || null, targetAudience || 'all', createdByUserId]
-  );
-  return res.insertId;
+  const { data, error } = await supabase
+    .from('events')
+    .insert({
+      title: title.trim(),
+      description: description.trim(),
+      event_date: eventDate,
+      start_time: startTime || null,
+      end_time: endTime || null,
+      location: location || null,
+      target_audience: targetAudience || 'all',
+      created_by_user_id: createdByUserId,
+    })
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  return data.id;
 }
 
 export async function deleteEvent(id) {
-  await pool.query(`DELETE FROM events WHERE id = ?`, [id]);
+  const { error } = await supabase.from('events').delete().eq('id', id);
+  if (error) throw error;
 }

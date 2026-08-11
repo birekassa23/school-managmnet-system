@@ -1,63 +1,101 @@
-import pool from '../config/db.js';
+import { supabase } from '../config/supabase.js';
 
 export async function findUserByUsernameOrEmail(identifier) {
-  const [rows] = await pool.query(
-    `SELECT * FROM users WHERE username = ? OR email = ? LIMIT 1`,
-    [identifier.trim(), identifier.trim()]
-  );
-  return rows[0] || null;
+  const cleanId = identifier.trim();
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .or(`username.eq.${cleanId},email.eq.${cleanId}`)
+    .maybeSingle();
+
+  if (error && error.code !== 'PGRST116') throw error;
+  return data || null;
 }
 
 export async function getUserRoles(userId) {
-  const [rows] = await pool.query(
-    `SELECT r.name FROM roles r
-     JOIN user_roles ur ON r.id = ur.role_id
-     WHERE ur.user_id = ?`,
-    [userId]
-  );
-  return rows.map((r) => r.name);
+  const { data, error } = await supabase
+    .from('user_roles')
+    .select('roles(name)')
+    .eq('user_id', userId);
+
+  if (error) throw error;
+  return (data || []).map((r) => r.roles?.name).filter(Boolean);
 }
 
 export async function getUserPermissions(userId) {
-  const [rows] = await pool.query(
-    `SELECT DISTINCT p.code FROM permissions p
-     JOIN role_permissions rp ON p.id = rp.permission_id
-     JOIN user_roles ur ON rp.role_id = ur.role_id
-     WHERE ur.user_id = ?`,
-    [userId]
-  );
-  return rows.map((p) => p.code);
+  const { data: userRoles, error: urErr } = await supabase
+    .from('user_roles')
+    .select('role_id')
+    .eq('user_id', userId);
+
+  if (urErr) throw urErr;
+  const roleIds = (userRoles || []).map((ur) => ur.role_id);
+  if (!roleIds.length) return [];
+
+  const { data: rolePerms, error: rpErr } = await supabase
+    .from('role_permissions')
+    .select('permissions(code)')
+    .in('role_id', roleIds);
+
+  if (rpErr) throw rpErr;
+  const codes = (rolePerms || []).map((rp) => rp.permissions?.code).filter(Boolean);
+  return Array.from(new Set(codes));
 }
 
 export async function createUser({ username, email, passwordHash, firstName, lastName, phoneNumber }) {
-  const [res] = await pool.query(
-    `INSERT INTO users (username, email, password_hash, first_name, last_name, phone_number, status)
-     VALUES (?, ?, ?, ?, ?, ?, 'active')`,
-    [username.trim(), email ? email.trim() : null, passwordHash, firstName.trim(), lastName.trim(), phoneNumber.trim()]
-  );
-  return res.insertId;
+  const { data, error } = await supabase
+    .from('users')
+    .insert({
+      username: username.trim(),
+      email: email ? email.trim() : null,
+      password_hash: passwordHash,
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      phone_number: phoneNumber.trim(),
+      status: 'active',
+    })
+    .select('id')
+    .single();
+
+  if (error) throw error;
+  return data.id;
 }
 
 export async function assignUserRole(userId, roleName) {
-  const [roleRows] = await pool.query(`SELECT id FROM roles WHERE name = ? LIMIT 1`, [roleName]);
-  if (!roleRows.length) throw new Error(`Role '${roleName}' does not exist`);
+  const { data: roleData, error: roleErr } = await supabase
+    .from('roles')
+    .select('id')
+    .eq('name', roleName)
+    .single();
 
-  const roleId = roleRows[0].id;
-  await pool.query(`INSERT IGNORE INTO user_roles (user_id, role_id) VALUES (?, ?)`, [userId, roleId]);
+  if (roleErr || !roleData) throw new Error(`Role '${roleName}' does not exist`);
+
+  const { error } = await supabase
+    .from('user_roles')
+    .upsert({ user_id: userId, role_id: roleData.id }, { onConflict: 'user_id,role_id' });
+
+  if (error) throw error;
 }
 
 export async function createStudentProfile(userId, admissionNumber, emergencyName, emergencyPhone) {
-  await pool.query(
-    `INSERT INTO students (user_id, admission_number, emergency_contact_name, emergency_contact_phone, status)
-     VALUES (?, ?, ?, ?, 'active')`,
-    [userId, admissionNumber.trim(), emergencyName?.trim() || null, emergencyPhone?.trim() || null]
-  );
+  const { error } = await supabase.from('students').insert({
+    user_id: userId,
+    admission_number: admissionNumber.trim(),
+    emergency_contact_name: emergencyName?.trim() || null,
+    emergency_contact_phone: emergencyPhone?.trim() || null,
+    status: 'active',
+  });
+
+  if (error) throw error;
 }
 
 export async function createTeacherProfile(userId, employeeId, qualification, specialization) {
-  await pool.query(
-    `INSERT INTO teachers (user_id, employee_id, qualification, specialization)
-     VALUES (?, ?, ?, ?)`,
-    [userId, employeeId.trim(), qualification?.trim() || 'B.Ed', specialization?.trim() || 'General']
-  );
+  const { error } = await supabase.from('teachers').insert({
+    user_id: userId,
+    employee_id: employeeId.trim(),
+    qualification: qualification?.trim() || 'B.Ed',
+    specialization: specialization?.trim() || 'General',
+  });
+
+  if (error) throw error;
 }

@@ -63,6 +63,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notices', noticeRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/videos', videoRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/events', eventRoutes);
 
 // 404 Route handler
 app.use((_req, res) => {
