@@ -40,6 +40,16 @@ app.use(express.urlencoded({ extended: true }));
 const uploadsRootDir = path.join(__dirname, '../uploads');
 app.use('/uploads', express.static(uploadsRootDir));
 
+// Root API Server Welcome Route
+app.get('/', (_req, res) => {
+  res.json({
+    success: true,
+    message: 'Welcome to Azene Wube Academy SMS API Backend Server 🚀',
+    health: '/api/health',
+    version: '2.0.0',
+  });
+});
+
 // Health Check API
 app.get('/api/health', (_req, res) => {
   res.json({
