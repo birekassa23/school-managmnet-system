@@ -6,6 +6,14 @@ dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const parseCorsOrigin = (originEnv) => {
+  if (!originEnv || originEnv === '*') return '*';
+  if (originEnv.includes(',')) {
+    return originEnv.split(',').map((o) => o.trim());
+  }
+  return originEnv;
+};
+
 export const config = {
   port: Number(process.env.PORT || 5000),
   nodeEnv: process.env.NODE_ENV || 'development',
@@ -27,7 +35,7 @@ export const config = {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   },
   cors: {
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+    origin: parseCorsOrigin(process.env.CLIENT_ORIGIN || '*'),
   },
   uploads: {
     imageDir: path.join(__dirname, '../../uploads/images'),
