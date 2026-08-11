@@ -1,14 +1,39 @@
 {
   "name": "azene-wube-academy-server",
-  "version": "1.0.0",
-  "description": "Express API for School Interaction System",
+  "version": "2.0.0",
+  "description": "Production-grade Express REST API for Azene Wube Academy School Management System (Supabase / Postgres)",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
+    "dev": "node --watch src/index.js",
+    "db:migrate": "node sql/migrate_legacy.js",
+    "test": "node --test tests/**/*.test.js"
   },
-  "keywords": [],
-  "author": "",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.16.2",
+    "pg": "^8.13.3"
+  },
+  "devDependencies": {
+    "supertest": "^7.2.2"
+  },
+  "keywords": [
+    "school-management-system",
+    "express",
+    "supabase",
+    "postgresql",
+    "rbac",
+    "jwt"
+  ],
+  "author": "Azene Wube Academy Engineering",
   "license": "ISC"
 }

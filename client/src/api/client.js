@@ -20,18 +20,25 @@ export async function api(path, options = {}) {
   });
 
   const contentType = res.headers.get('content-type');
-  const data = contentType?.includes('application/json') ? await res.json() : null;
+  const body = contentType?.includes('application/json') ? await res.json() : null;
 
   if (!res.ok) {
-    const err = new Error(data?.message || data?.error || 'Request failed');
+    const message = body?.message || body?.error || 'Request failed';
+    const err = new Error(message);
     err.status = res.status;
-    err.code = data?.error;
+    err.data = body;
     throw err;
   }
-  return data;
+
+  // Handle standard success envelope { success: true, data: ... }
+  if (body && typeof body === 'object' && 'data' in body) {
+    return body.data;
+  }
+
+  return body;
 }
 
 export function uploadUrl(filename, type = 'image') {
-  const folder = type === 'video' ? 'video' : 'image';
+  const folder = type === 'video' ? 'videos' : 'images';
   return `/uploads/${folder}/${filename}`;
 }

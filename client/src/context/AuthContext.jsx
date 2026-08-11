@@ -29,18 +29,32 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  const value = useMemo(
-    () => ({
+  const hasPermission = (code) => {
+    if (!user) return false;
+    const roles = user.roles || (user.role ? [user.role] : []);
+    if (roles.includes('super_admin')) return true;
+    const permissions = user.permissions || [];
+    return permissions.includes(code);
+  };
+
+  const value = useMemo(() => {
+    const roles = user?.roles || (user?.role ? [user.role] : []);
+    const isTeacher = roles.includes('teacher');
+    const isStudent = roles.includes('student');
+    const isPrincipal = roles.includes('principal') || roles.includes('super_admin');
+
+    return {
       user,
       token,
-      isTeacher: user?.role === 'teacher',
-      isStudent: user?.role === 'student',
-      isPrincipal: user?.role === 'teacher' && user?.id === 5,
+      roles,
+      isTeacher,
+      isStudent,
+      isPrincipal,
+      hasPermission,
       login,
       logout,
-    }),
-    [user, token]
-  );
+    };
+  }, [user, token]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
